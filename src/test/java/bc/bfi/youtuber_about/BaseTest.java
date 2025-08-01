@@ -4,9 +4,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Collections;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,5 +51,43 @@ public class BaseTest {
         verify(stmt).setString(9, "tt");
         verify(stmt).setString(10, "links");
         verify(stmt).executeUpdate();
+    }
+
+    @Test
+    public void existsShouldReturnTrueWhenRecordFound() throws Exception {
+        Connection connection = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+        when(connection.isClosed()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
+        when(rs.next()).thenReturn(true);
+
+        Base base = new Base(connection);
+
+        boolean result = base.exists("channel");
+
+        verify(stmt).setString(1, "channel");
+        verify(stmt).executeQuery();
+        assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void existsShouldReturnFalseWhenRecordMissing() throws Exception {
+        Connection connection = mock(Connection.class);
+        PreparedStatement stmt = mock(PreparedStatement.class);
+        ResultSet rs = mock(ResultSet.class);
+        when(connection.isClosed()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(stmt);
+        when(stmt.executeQuery()).thenReturn(rs);
+        when(rs.next()).thenReturn(false);
+
+        Base base = new Base(connection);
+
+        boolean result = base.exists("channel");
+
+        verify(stmt).setString(1, "channel");
+        verify(stmt).executeQuery();
+        assertThat(result, equalTo(false));
     }
 }

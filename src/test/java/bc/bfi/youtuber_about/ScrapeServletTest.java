@@ -5,6 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.any;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,7 +17,6 @@ import bc.bfi.youtuber_about.Base;
 import bc.bfi.youtuber_about.ChannelAbout;
 import bc.bfi.youtuber_about.ChromeDownloader;
 import bc.bfi.youtuber_about.Parser;
-import java.util.Collections;
 import org.junit.Test;
 
 public class ScrapeServletTest {
@@ -31,6 +33,7 @@ public class ScrapeServletTest {
         ChromeDownloader downloader = mock(ChromeDownloader.class);
         Parser parser = mock(Parser.class);
         Base base = mock(Base.class);
+        when(base.exists("test-domain")).thenReturn(false);
 
         when(downloader.download("test-domain")).thenReturn("page");
         ChannelAbout about = new ChannelAbout("test-domain");
@@ -39,9 +42,35 @@ public class ScrapeServletTest {
         ScrapeServlet servlet = new ScrapeServlet(downloader, parser, base);
         servlet.doPost(req, resp);
 
+        verify(base).exists("test-domain");
         verify(downloader).download("test-domain");
         verify(parser).parse("test-domain", "page");
         verify(base).add(about);
         assertThat(out.toString(), equalTo("Scraped: test-domain"));
+    }
+
+    @Test
+    public void shouldSkipIfRecordExists() throws Exception {
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        HttpServletResponse resp = mock(HttpServletResponse.class);
+        when(req.getParameter("queries")).thenReturn("test-domain");
+
+        StringWriter out = new StringWriter();
+        when(resp.getWriter()).thenReturn(new PrintWriter(out));
+
+        ChromeDownloader downloader = mock(ChromeDownloader.class);
+        Parser parser = mock(Parser.class);
+        Base base = mock(Base.class);
+
+        when(base.exists("test-domain")).thenReturn(true);
+
+        ScrapeServlet servlet = new ScrapeServlet(downloader, parser, base);
+        servlet.doPost(req, resp);
+
+        verify(base).exists("test-domain");
+        verify(downloader, never()).download(anyString());
+        verify(parser, never()).parse(anyString(), anyString());
+        verify(base, never()).add(any(ChannelAbout.class));
+        assertThat(out.toString(), equalTo("Skipped: test-domain"));
     }
 }
