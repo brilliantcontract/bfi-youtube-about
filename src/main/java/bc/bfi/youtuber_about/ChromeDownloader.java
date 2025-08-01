@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -17,18 +18,21 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ChromeDownloader {
 
-    private static final String WHOIS_SERVICE_URL = "https://ph.godaddy.com/whois/results.aspx?itc=dlp_domain_whois&domain=";
-    private static final String WHOIS_SERVICE_URL_WITH_WEB_PROXY = "https://54.215.43.55:4002/proxy/load?key=my-little-secret&only-proxy-provider=zyte.com&url=https://ph.godaddy.com/whois/results.aspx?itc=dlp_domain_whois&domain=";
     private static final Logger LOGGER = Logger.getLogger(ChromeDownloader.class.getName());
     private final PageContentExtractor extractor = new PageContentExtractor();
 
-    public String download(String domain) {
-        final String queryUrl = WHOIS_SERVICE_URL + domain;
-
+    public String download(String url) {
         WebDriver driver = createDriver();
-        driver.navigate().to(queryUrl);
-
+        
+        // Load page.
+        System.out.println("Downloading page " + url);
+        driver.navigate().to(url);
         waitPageFullLoading(driver);
+        
+        // Load about dialog.
+        System.out.println("Wait for \"more...\" button");
+        driver.findElement(By.className("truncated-text-wiz__absolute-button")).click();
+        waitAboutDialogFullLoading(driver);
 
         String webPage = "";
         try {
@@ -48,7 +52,27 @@ public class ChromeDownloader {
         try {
             WebElement element = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                            By.cssSelector("div#domain-information-reveal span#title-domainName, div#alert-domain-not-found, p#ErrorWhoisResult")
+                            By.className("truncated-text-wiz__absolute-button")
+                    )
+            );
+        } catch (TimeoutException ex) {
+            System.err.println("Loading web page timeout exception. " + ex.getMessage());
+        }
+
+        try {
+            Thread.sleep(1_500);
+        } catch (InterruptedException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void waitAboutDialogFullLoading(WebDriver driver) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+
+        try {
+            WebElement element = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.cssSelector("yt-attributed-string#description-container")
                     )
             );
         } catch (TimeoutException ex) {

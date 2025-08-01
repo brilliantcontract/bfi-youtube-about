@@ -30,12 +30,15 @@ public class ScrapeServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "queries parameter is required");
             return;
         }
+        
+        url = "https://youtube.com/" + url;
 
+        System.out.println("-------------------------------------");
         System.out.println("Scrape: " + url);
 
         String webPage = downloader.download(url);
         ChannelAbout channel = parser.parse(url, webPage);
-        base.add(Collections.singletonList(channel));
+        base.add(channel);
 
         resp.setContentType("text/plain");
         PrintWriter writer = resp.getWriter();

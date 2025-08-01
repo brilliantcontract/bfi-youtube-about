@@ -31,9 +31,7 @@ public class PageContentExtractor {
 
     public String gainDynamic(WebDriver driver, Boolean captureFrames) throws IOException {
         try {
-            if (javascriptExecutor == null) {
-                javascriptExecutor = (JavascriptExecutor) driver;
-            }
+            javascriptExecutor = (JavascriptExecutor) driver;
 
             String document = getJsContent();
 

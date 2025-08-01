@@ -18,8 +18,8 @@ public class Base {
     static final String DB_PASSWORD = "RootSecret1!";
     static final String DB_TABLE = "channels_abouts";
 
-    private static final String DB_URL =
-            "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
+    private static final String DB_URL
+            = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME;
 
     private static final Logger LOGGER = Logger.getLogger(Base.class.getName());
 
@@ -51,8 +51,8 @@ public class Base {
         }
     }
 
-    void add(List<ChannelAbout> channels) {
-        if (channels == null || channels.isEmpty()) {
+    void add(ChannelAbout channel) {
+        if (channel == null) {
             return;
         }
 
@@ -63,23 +63,21 @@ public class Base {
                     + "(url, description, videos, views, join_date, link_to_instagram, link_to_facebook, link_to_twitter, link_to_tiktok, other_links)"
                     + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            for (ChannelAbout channel : channels) {
-                try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setString(2, channel.getUrl());
-                    stmt.setString(4, channel.getDescription());
-                    stmt.setString(6, channel.getVideos());
-                    stmt.setString(7, channel.getViews());
-                    stmt.setString(8, channel.getJoinDate());
-                    stmt.setString(9, channel.getLinkToInstagram());
-                    stmt.setString(10, channel.getLinkToFacebook());
-                    stmt.setString(11, channel.getLinkToTwitter());
-                    stmt.setString(12, channel.getLinkToTiktok());
-                    stmt.setString(13, channel.getOtherLinks());
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, channel.getUrl());
+                stmt.setString(2, channel.getDescription());
+                stmt.setString(3, channel.getVideos());
+                stmt.setString(4, channel.getViews());
+                stmt.setString(5, channel.getJoinDate());
+                stmt.setString(6, channel.getLinkToInstagram());
+                stmt.setString(7, channel.getLinkToFacebook());
+                stmt.setString(8, channel.getLinkToTwitter());
+                stmt.setString(9, channel.getLinkToTiktok());
+                stmt.setString(10, channel.getOtherLinks());
 
-                    stmt.executeUpdate();
-                } catch (SQLIntegrityConstraintViolationException ex) {
-                    LOGGER.log(Level.WARNING, "Duplicate url: " + channel.getUrl(), ex);
-                }
+                stmt.executeUpdate();
+            } catch (SQLIntegrityConstraintViolationException ex) {
+                LOGGER.log(Level.WARNING, "Duplicate url: " + channel.getUrl(), ex);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);

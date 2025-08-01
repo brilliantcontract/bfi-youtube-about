@@ -41,7 +41,7 @@ public class ScrapeServletTest {
 
         verify(downloader).download("test-domain");
         verify(parser).parse("test-domain", "page");
-        verify(base).add(Collections.singletonList(about));
+        verify(base).add(about);
         assertThat(out.toString(), equalTo("Scraped: test-domain"));
     }
 }
