@@ -36,6 +36,9 @@ public class ScrapeServlet extends HttpServlet {
             PrintWriter writer = resp.getWriter();
             writer.write("Skipped: " + channelId);
             writer.flush();
+            
+            System.out.println("!!! Skipped: " + channelId + "(channel already exist in the database)");
+            
             return;
         }
 
