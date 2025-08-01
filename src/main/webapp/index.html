@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Youtube Channel Scraper</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Bootstrap / JQuery / Knockout. -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous" />
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js"></script>
+    </head>
+    <body class="container mt-3">
+        <h1>Youtube Channel Scraper</h1>
+
+        <form id="scrapeForm">
+            <div class="form-group">
+                <label for="queries">Channel names:</label>
+                <textarea id="queries" name="queries" class="form-control" rows="5" placeholder="One channel name per line"></textarea>
+            </div>
+            <div class="form-group">
+                <div class="progress">
+                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div id="progressLog" class="form-group"></div>
+            <button id="startBtn" type="button" class="btn btn-primary">Start</button>
+            <button id="stopBtn" type="button" class="btn btn-danger">Stop</button>
+        </form>
+
+        <script>
+            $(function() {
+                $('#stopBtn').on('click', function() {
+                    if (confirm('Stop scraping process?')) {
+                        console.log('Stopping...');
+                    }
+                });
+                $('#startBtn').on('click', function() {
+                    var lines = $('#queries').val().split(/\r?\n/);
+                    var queries = [];
+                    lines.forEach(function(l) {
+                        l = l.trim();
+                        if (l.length > 0) {
+                            queries.push('https://youtube.com/' + l);
+                        }
+                    });
+
+                    if (queries.length === 0) {
+                        alert('Please provide channel names');
+                        return;
+                    }
+
+                    $('#progressBar').css('width', '0%').attr('aria-valuenow', 0);
+                    $('#progressLog').empty();
+                    $('#startBtn').prop('disabled', true);
+
+                    var processed = 0;
+
+                    function processNext() {
+                        if (processed >= queries.length) {
+                            $('#startBtn').prop('disabled', false);
+                            alert('Scraping completed');
+                            return;
+                        }
+
+                        var q = queries[processed];
+                        $.ajax({
+                            url: 'scrape',
+                            method: 'POST',
+                            data: { queries: q.substring('https://youtube.com/'.length) },
+                            success: function() {
+                                console.log('Processed: ' + q);
+                            },
+                            error: function() {
+                                console.log('Failed: ' + q);
+                            },
+                            complete: function() {
+                                processed++;
+                                var percent = Math.round((processed / queries.length) * 100);
+                                $('#progressBar').css('width', percent + '%').attr('aria-valuenow', percent);
+                                processNext();
+                            }
+                        });
+                    }
+
+                    processNext();
+                });
+            });
+        </script>
+    </body>
+</html>
