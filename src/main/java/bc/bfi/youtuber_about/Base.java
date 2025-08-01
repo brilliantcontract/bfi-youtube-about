@@ -84,4 +84,25 @@ public class Base {
         }
     }
 
+    boolean exists(String url) {
+        boolean found = false;
+
+        try {
+            connect();
+
+            String sql = "SELECT 1 FROM " + DB_TABLE + " WHERE url = ? LIMIT 1";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, url);
+
+                java.sql.ResultSet rs = stmt.executeQuery();
+                found = rs.next();
+                rs.close();
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        return found;
+    }
+
 }

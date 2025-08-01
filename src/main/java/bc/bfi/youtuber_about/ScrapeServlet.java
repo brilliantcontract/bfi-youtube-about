@@ -25,13 +25,21 @@ public class ScrapeServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String url = req.getParameter("queries");
-        if (url == null) {
+        String channelId = req.getParameter("queries");
+        if (channelId == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "queries parameter is required");
             return;
         }
-        
-        url = "https://youtube.com/" + url;
+
+        if (base.exists(channelId)) {
+            resp.setContentType("text/plain");
+            PrintWriter writer = resp.getWriter();
+            writer.write("Skipped: " + channelId);
+            writer.flush();
+            return;
+        }
+
+        String url = "https://youtube.com/" + channelId;
 
         System.out.println("-------------------------------------");
         System.out.println("Scrape: " + url);
@@ -42,7 +50,7 @@ public class ScrapeServlet extends HttpServlet {
 
         resp.setContentType("text/plain");
         PrintWriter writer = resp.getWriter();
-        writer.write("Scraped: " + url);
+        writer.write("Scraped: " + channelId);
         writer.flush();
     }
 }
