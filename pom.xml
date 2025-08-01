@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <tomcat.version>9.0.83</tomcat.version>
+        <tomcat.version>8.5.23</tomcat.version>
         <selenium.version>3.141.59</selenium.version>
     </properties>
     
@@ -256,7 +256,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>bc.bfi.youtuber.about.Main</mainClass>
+                            <mainClass>bc.bfi.youtuber_about.WebMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

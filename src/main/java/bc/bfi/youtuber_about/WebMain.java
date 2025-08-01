@@ -1,9 +1,11 @@
+package bc.bfi.youtuber_about;
+
 import java.io.File;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import javax.servlet.ServletRegistration;
-import bc.bfi.youtuber.search.ScrapeServlet;
+import bc.bfi.youtuber_about.ScrapeServlet;
 
 public class WebMain {
 

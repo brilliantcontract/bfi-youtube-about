@@ -1,4 +1,4 @@
-package bc.bfi.youtuber.search;
+package bc.bfi.youtuber_about;
 
 import java.io.IOException;
 import java.io.PrintWriter;
