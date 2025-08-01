@@ -25,8 +25,10 @@ public class Parser {
             return channel;
         }
 
-        //channel.setDomainInformationName(fetchText("#domain-information-reveal #title-domainName + span", doc));
-        //channel.setError(fetchText("div#alert-domain-not-found", doc));
+        channel.setError(fetchText("div#alert-domain-not-found", doc));
+        channel.setName("the-name");
+        channel.setDescription("the-description");
+        channel.setVideos("127");
 
         return channel;
     }
