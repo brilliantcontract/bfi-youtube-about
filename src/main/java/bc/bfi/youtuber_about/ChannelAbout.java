@@ -1,12 +1,11 @@
 package bc.bfi.youtuber_about;
 
-public class Channel {
+public class ChannelAbout {
 
     private String name = "";
-    private final String handler;
+    private final String url;
     private String verified = "";
     private String description = "";
-    private final String address;
     private String subscribers = "";
     private String videos = "";
     private String views = "";
@@ -18,9 +17,8 @@ public class Channel {
     private String otherLinks = "";
     private String error = "";
 
-    public Channel(String handler) {
-        this.handler = handler;
-        this.address = "https://www.youtube.com/" + handler;
+    public ChannelAbout(String url) {
+        this.url = url;
     }
 
     public String getError() {
@@ -31,12 +29,8 @@ public class Channel {
         this.error = error;
     }
 
-    public String getHandler() {
-        return handler;
-    }
-
-    public String getAddress() {
-        return address;
+    public String getUrl() {
+        return url;
     }
 
     public String getName() {

@@ -20,7 +20,6 @@ public class CsvStorage {
     private static final Logger LOGGER = Logger.getLogger(CsvStorage.class.getName());
 
     private static final String[] HEADERS = {
-        "ADDRESS",
         "NAME",
         "HANDLER",
         "JOIN_DATE",
@@ -63,11 +62,10 @@ public class CsvStorage {
         }
     }
 
-    public void append(Channel channel) {
+    public void append(ChannelAbout channel) {
         List<String> record = new ArrayList<>();
-        record.add(channel.getAddress());
         record.add(channel.getName());
-        record.add(channel.getHandler());
+        record.add(channel.getUrl());
         record.add(channel.getJoinDate());
         record.add(channel.getVerified());
         record.add(channel.getSubscribers());

@@ -6,8 +6,8 @@ import org.jsoup.select.Elements;
 
 public class Parser {
 
-    public Channel parse(String channelName, String webPage) {
-        Channel channel = new Channel(channelName);
+    public ChannelAbout parse(String channelName, String webPage) {
+        ChannelAbout channel = new ChannelAbout(channelName);
 
         if (webPage.isEmpty()) {
             channel.setError("Web page downloaded empty.");
