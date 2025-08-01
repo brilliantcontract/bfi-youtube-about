@@ -1,14 +1,17 @@
 package bc.bfi.youtuber_about;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,30 +21,29 @@ public class ChromeDownloader {
     private static final String WHOIS_SERVICE_URL_WITH_WEB_PROXY = "https://54.215.43.55:4002/proxy/load?key=my-little-secret&only-proxy-provider=zyte.com&url=https://ph.godaddy.com/whois/results.aspx?itc=dlp_domain_whois&domain=";
     private static final Logger LOGGER = Logger.getLogger(ChromeDownloader.class.getName());
     private final PageContentExtractor extractor = new PageContentExtractor();
-    private ChromeDriver chrome;
 
     public String download(String domain) {
         final String queryUrl = WHOIS_SERVICE_URL + domain;
 
-        if (this.chrome == null) {
-            this.chrome = createDriver();
-        }
-        this.chrome.navigate().to(queryUrl);
+        WebDriver driver = createDriver();
+        driver.navigate().to(queryUrl);
 
-        waitPageFullLoading(this.chrome);
+        waitPageFullLoading(driver);
 
         String webPage = "";
         try {
-            webPage = extractor.gainDynamic(this.chrome, Boolean.FALSE);
+            webPage = extractor.gainDynamic(driver, Boolean.FALSE);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
+        driver.quit();
+
         return webPage;
     }
 
-    private void waitPageFullLoading(ChromeDriver chrome) {
-        WebDriverWait wait = new WebDriverWait(chrome, 10);
+    private void waitPageFullLoading(WebDriver driver) {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
 
         try {
             WebElement element = wait.until(
@@ -60,7 +62,7 @@ public class ChromeDownloader {
         }
     }
 
-    private ChromeDriver createDriver() {
+    protected WebDriver createDriver() {
         ChromeOptions options = new ChromeOptions();
         //options.addArguments("--remote-allow-origins=*");
         //options.addArguments("--proxy-server=socks5://3.85.180.106:1080");
@@ -71,15 +73,16 @@ public class ChromeDownloader {
         options.addArguments("--disable-blink-features=AutomationControlled");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-blink-features");
-        options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--allow-insecure-localhost");
 
-        ChromeDriver chrome = new ChromeDriver(options);
-
-        return chrome;
+        return connectRemote(options);
     }
 
-    public void quit() {
-        chrome.close();
+    private WebDriver connectRemote(ChromeOptions options) {
+        try {
+            URL url = new URL("http://localhost:4444/wd/hub");
+            return new RemoteWebDriver(url, options);
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
