@@ -14,7 +14,6 @@ public class ChromeDownloaderTest {
     public void createDriverShouldUseRemote() {
         final WebDriver remote = mock(WebDriver.class);
         ChromeDownloader downloader = new ChromeDownloader() {
-            @Override
             protected WebDriver connectRemote(ChromeOptions options) {
                 return remote;
             }

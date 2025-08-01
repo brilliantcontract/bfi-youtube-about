@@ -22,10 +22,7 @@ public class BaseTest {
         Base base = new Base(connection);
 
         ChannelAbout channel = new ChannelAbout("https://example.com");
-        channel.setName("name");
-        channel.setVerified("yes");
         channel.setDescription("desc");
-        channel.setSubscribers("1");
         channel.setVideos("2");
         channel.setViews("3");
         channel.setJoinDate("4");
@@ -34,25 +31,20 @@ public class BaseTest {
         channel.setLinkToTwitter("tw");
         channel.setLinkToTiktok("tt");
         channel.setOtherLinks("links");
-        channel.setError("error");
 
         base.add(Collections.singletonList(channel));
 
         verify(connection).prepareStatement(anyString());
-        verify(stmt).setString(1, "name");
-        verify(stmt).setString(2, "https://example.com");
-        verify(stmt).setString(3, "yes");
-        verify(stmt).setString(4, "desc");
-        verify(stmt).setString(5, "1");
-        verify(stmt).setString(6, "2");
-        verify(stmt).setString(7, "3");
-        verify(stmt).setString(8, "4");
-        verify(stmt).setString(9, "ig");
-        verify(stmt).setString(10, "fb");
-        verify(stmt).setString(11, "tw");
-        verify(stmt).setString(12, "tt");
-        verify(stmt).setString(13, "links");
-        verify(stmt).setString(14, "error");
+        verify(stmt).setString(1, "https://example.com");
+        verify(stmt).setString(2, "desc");
+        verify(stmt).setString(3, "1");
+        verify(stmt).setString(4, "3");
+        verify(stmt).setString(5, "4");
+        verify(stmt).setString(6, "ig");
+        verify(stmt).setString(7, "fb");
+        verify(stmt).setString(8, "tw");
+        verify(stmt).setString(9, "tt");
+        verify(stmt).setString(10, "links");
         verify(stmt).executeUpdate();
     }
 }

@@ -2,11 +2,8 @@ package bc.bfi.youtuber_about;
 
 public class ChannelAbout {
 
-    private String name = "";
     private final String url;
-    private String verified = "";
     private String description = "";
-    private String subscribers = "";
     private String videos = "";
     private String views = "";
     private String joinDate = "";
@@ -15,38 +12,13 @@ public class ChannelAbout {
     private String linkToTwitter = "";
     private String linkToTiktok = "";
     private String otherLinks = "";
-    private String error = "";
 
     public ChannelAbout(String url) {
         this.url = url;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getVerified() {
-        return verified;
-    }
-
-    public void setVerified(String verified) {
-        this.verified = verified;
     }
 
     public String getDescription() {
@@ -55,14 +27,6 @@ public class ChannelAbout {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getSubscribers() {
-        return subscribers;
-    }
-
-    public void setSubscribers(String subscribers) {
-        this.subscribers = subscribers;
     }
 
     public String getVideos() {

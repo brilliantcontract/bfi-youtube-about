@@ -60,16 +60,13 @@ public class Base {
             connect();
 
             String sql = "INSERT INTO " + DB_TABLE
-                    + "(name, url, verified, description, subscribers, videos, views, join_date, link_to_instagram, link_to_facebook, link_to_twitter, link_to_tiktok, other_links, error)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "(url, description, videos, views, join_date, link_to_instagram, link_to_facebook, link_to_twitter, link_to_tiktok, other_links)"
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             for (ChannelAbout channel : channels) {
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                    stmt.setString(1, channel.getName());
                     stmt.setString(2, channel.getUrl());
-                    stmt.setString(3, channel.getVerified());
                     stmt.setString(4, channel.getDescription());
-                    stmt.setString(5, channel.getSubscribers());
                     stmt.setString(6, channel.getVideos());
                     stmt.setString(7, channel.getViews());
                     stmt.setString(8, channel.getJoinDate());
@@ -78,7 +75,6 @@ public class Base {
                     stmt.setString(11, channel.getLinkToTwitter());
                     stmt.setString(12, channel.getLinkToTiktok());
                     stmt.setString(13, channel.getOtherLinks());
-                    stmt.setString(14, channel.getError());
 
                     stmt.executeUpdate();
                 } catch (SQLIntegrityConstraintViolationException ex) {

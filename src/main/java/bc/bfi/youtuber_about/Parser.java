@@ -1,39 +1,37 @@
 package bc.bfi.youtuber_about;
 
+import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 public class Parser {
+    
+    private Document doc;
 
-    public ChannelAbout parse(String channelName, String webPage) {
-        ChannelAbout channel = new ChannelAbout(channelName);
+    public ChannelAbout parse(String url, String webPage) {
+        ChannelAbout channel = new ChannelAbout(url.replaceAll(".+/", ""));
 
-        if (webPage.isEmpty()) {
-            channel.setError("Web page downloaded empty.");
-            System.err.println("Web page downloaded empty.");
-
-            return channel;
-        }
-
-        Document doc = Jsoup.parse(webPage);
-
-        if (!doc.select("div#alert-domain-not-found, p#ErrorWhoisResult").isEmpty()) {
-            channel.setError("GoDaddy retun error message. Most likely scraper request has been blocked.");
-            System.err.println("GoDaddy retun error message. Most likely scraper request has been blocked.");
-
-            return channel;
-        }
-
-        channel.setError(fetchText("div#alert-domain-not-found", doc));
-        channel.setName("the-name");
-        channel.setDescription("the-description");
-        channel.setVideos("127");
+        this.doc = Jsoup.parse(webPage);
+        
+        channel.setJoinDate(fetchText("tr.description-item td:has(yt-icon[icon=info_outline]) + td"));
+        channel.setVideos(fetchText("tr.description-item td:has(yt-icon[icon=my_videos]) + td"));
+        channel.setViews(fetchText("tr.description-item td:has(yt-icon[icon=trending_up]) + td"));
+        
+        channel.setDescription(fetchText("yt-attributed-string#description-container"));
+        
+        List<String> links = doc.select("div#links-section a.yt-core-attributed-string__link").eachAttr("abs:href");
+        channel.setOtherLinks(String.join("◙", links));
+        
+        channel.setLinkToFacebook(SocialLinkExtractor.facebook(links));
+        channel.setLinkToInstagram(SocialLinkExtractor.instagram(links));
+        channel.setLinkToTiktok(SocialLinkExtractor.tiktok(links));
+        channel.setLinkToTwitter(SocialLinkExtractor.twitter(links));
 
         return channel;
     }
 
-    private String fetchText(String cssSelector, Document doc) {
+    private String fetchText(String cssSelector) {
         String results = "";
 
         try {
