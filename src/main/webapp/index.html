@@ -17,6 +17,10 @@
 
         <form id="scrapeForm">
             <div class="form-group">
+                <label for="gridHost">Selenium Grid Host:</label>
+                <input id="gridHost" name="gridHost" class="form-control" type="text" placeholder="localhost" />
+            </div>
+            <div class="form-group">
                 <label for="queries">Channel names:</label>
                 <textarea id="queries" name="queries" class="form-control" rows="5" placeholder="One channel name per line"></textarea>
             </div>
@@ -31,7 +35,43 @@
         </form>
 
         <script>
+            var dbPromise = new Promise(function(resolve, reject) {
+                var request = indexedDB.open('selenium-grid', 1);
+                request.onupgradeneeded = function(event) {
+                    var db = event.target.result;
+                    db.createObjectStore('config', { keyPath: 'id' });
+                };
+                request.onsuccess = function(event) {
+                    resolve(event.target.result);
+                };
+                request.onerror = function(event) {
+                    reject(event.target.error);
+                };
+            });
+
+            function loadGridHost() {
+                dbPromise.then(function(db) {
+                    var tx = db.transaction('config', 'readonly');
+                    var store = tx.objectStore('config');
+                    var req = store.get('gridHost');
+                    req.onsuccess = function() {
+                        if (req.result) {
+                            $('#gridHost').val(req.result.value);
+                        }
+                    };
+                });
+            }
+
+            function saveGridHost(value) {
+                dbPromise.then(function(db) {
+                    var tx = db.transaction('config', 'readwrite');
+                    var store = tx.objectStore('config');
+                    store.put({ id: 'gridHost', value: value });
+                });
+            }
+
             $(function() {
+                loadGridHost();
                 $('#stopBtn').on('click', function() {
                     if (confirm('Stop scraping process?')) {
                         console.log('Stopping...');
@@ -52,6 +92,9 @@
                         return;
                     }
 
+                    var host = $('#gridHost').val().trim() || 'localhost';
+                    saveGridHost(host);
+
                     $('#progressBar').css('width', '0%').attr('aria-valuenow', 0);
                     $('#progressLog').empty();
                     $('#startBtn').prop('disabled', true);
@@ -69,7 +112,7 @@
                         $.ajax({
                             url: 'scrape',
                             method: 'POST',
-                            data: { queries: q.substring('https://youtube.com/'.length) },
+                            data: { queries: q.substring('https://youtube.com/'.length), gridHost: host },
                             success: function() {
                                 console.log('Processed: ' + q);
                             },

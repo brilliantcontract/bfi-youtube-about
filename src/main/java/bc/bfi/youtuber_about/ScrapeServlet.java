@@ -31,6 +31,11 @@ public class ScrapeServlet extends HttpServlet {
             return;
         }
 
+        String gridHost = req.getParameter("gridHost");
+        if (gridHost == null || gridHost.isEmpty()) {
+            gridHost = "localhost";
+        }
+
         if (base.exists(channelId)) {
             resp.setContentType("text/plain");
             PrintWriter writer = resp.getWriter();
@@ -47,7 +52,7 @@ public class ScrapeServlet extends HttpServlet {
         System.out.println("-------------------------------------");
         System.out.println("Scrape: " + url);
 
-        String webPage = downloader.download(url);
+        String webPage = downloader.download(url, gridHost);
         ChannelAbout channel = parser.parse(url, webPage);
         base.add(channel);
 

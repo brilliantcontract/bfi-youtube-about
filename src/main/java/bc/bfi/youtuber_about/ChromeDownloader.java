@@ -21,8 +21,8 @@ public class ChromeDownloader {
     private static final Logger LOGGER = Logger.getLogger(ChromeDownloader.class.getName());
     private final PageContentExtractor extractor = new PageContentExtractor();
 
-    public String download(String url) {
-        WebDriver driver = createDriver();
+    public String download(String url, String gridHost) {
+        WebDriver driver = createDriver(gridHost);
         
         // Load page.
         System.out.println("Downloading page " + url);
@@ -86,7 +86,7 @@ public class ChromeDownloader {
         }
     }
 
-    protected WebDriver createDriver() {
+    protected WebDriver createDriver(String gridHost) {
         ChromeOptions options = new ChromeOptions();
         //options.addArguments("--remote-allow-origins=*");
         //options.addArguments("--proxy-server=socks5://3.85.180.106:1080");
@@ -98,12 +98,12 @@ public class ChromeDownloader {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-blink-features");
 
-        return connectRemote(options);
+        return connectRemote(gridHost, options);
     }
 
-    private WebDriver connectRemote(ChromeOptions options) {
+    protected WebDriver connectRemote(String gridHost, ChromeOptions options) {
         try {
-            URL url = new URL("http://localhost:4444/wd/hub");
+            URL url = new URL("http://" + gridHost + ":4444/wd/hub");
             return new RemoteWebDriver(url, options);
         } catch (MalformedURLException ex) {
             throw new RuntimeException(ex);
