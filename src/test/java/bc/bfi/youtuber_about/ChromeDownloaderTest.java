@@ -16,12 +16,12 @@ public class ChromeDownloaderTest {
     public void createDriverShouldUseRemote() {
         final WebDriver remote = mock(WebDriver.class);
         ChromeDownloader downloader = new ChromeDownloader() {
-            protected WebDriver connectRemote(ChromeOptions options) {
+            protected WebDriver connectRemote(String gridHost, ChromeOptions options) {
                 return remote;
             }
         };
 
-        WebDriver driver = downloader.createDriver();
+        WebDriver driver = downloader.createDriver("localhost");
 
         assertThat(driver, sameInstance(remote));
     }

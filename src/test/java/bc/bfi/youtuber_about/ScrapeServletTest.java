@@ -26,6 +26,7 @@ public class ScrapeServletTest {
         HttpServletRequest req = mock(HttpServletRequest.class);
         HttpServletResponse resp = mock(HttpServletResponse.class);
         when(req.getParameter("queries")).thenReturn("test-domain");
+        when(req.getParameter("gridHost")).thenReturn("localhost");
 
         StringWriter out = new StringWriter();
         when(resp.getWriter()).thenReturn(new PrintWriter(out));
@@ -35,7 +36,7 @@ public class ScrapeServletTest {
         Base base = mock(Base.class);
         when(base.exists("test-domain")).thenReturn(false);
 
-        when(downloader.download("test-domain")).thenReturn("page");
+        when(downloader.download("test-domain", "localhost")).thenReturn("page");
         ChannelAbout about = new ChannelAbout("test-domain");
         when(parser.parse("test-domain", "page")).thenReturn(about);
 
@@ -43,7 +44,7 @@ public class ScrapeServletTest {
         servlet.doPost(req, resp);
 
         verify(base).exists("test-domain");
-        verify(downloader).download("test-domain");
+        verify(downloader).download("test-domain", "localhost");
         verify(parser).parse("test-domain", "page");
         verify(base).add(about);
         assertThat(out.toString(), equalTo("Scraped: test-domain"));
@@ -68,7 +69,7 @@ public class ScrapeServletTest {
         servlet.doPost(req, resp);
 
         verify(base).exists("test-domain");
-        verify(downloader, never()).download(anyString());
+        verify(downloader, never()).download(anyString(), anyString());
         verify(parser, never()).parse(anyString(), anyString());
         verify(base, never()).add(any(ChannelAbout.class));
         assertThat(out.toString(), equalTo("Skipped: test-domain"));
