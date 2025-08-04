@@ -101,5 +101,40 @@ public class ChannelAbout {
     public void setOtherLinks(String otherLinks) {
         this.otherLinks = otherLinks;
     }
+    
+    public String getVideosAsNumber() {
+        int number = parseNumbers(this.videos);
+        return String.valueOf(number);
+    }
+    
+    public String getViewsAsNumber() {
+        int number = parseNumbers(this.views);
+        return String.valueOf(number);
+    }
+
+    private static int parseNumbers(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return 0;
+        }
+
+        input = input.replace(" subscribers", "").trim(); // Remove text part
+        input = input.replace(",", ""); // Remove commas if any
+
+        double multiplier = 1;
+        if (input.toLowerCase().endsWith("k")) {
+            multiplier = 1_000;
+            input = input.substring(0, input.length() - 1);
+        } else if (input.toLowerCase().endsWith("m")) {
+            multiplier = 1_000_000;
+            input = input.substring(0, input.length() - 1);
+        }
+
+        try {
+            double value = Double.parseDouble(input);
+            return (int) Math.round(value * multiplier);
+        } catch (NumberFormatException e) {
+            return 0; // Fallback for unexpected input
+        }
+    }
 
 }

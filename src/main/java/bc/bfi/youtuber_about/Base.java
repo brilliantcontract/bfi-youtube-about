@@ -66,8 +66,8 @@ public class Base {
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, channel.getUrl());
                 stmt.setString(2, channel.getDescription());
-                stmt.setString(3, channel.getVideos());
-                stmt.setString(4, channel.getViews());
+                stmt.setString(3, channel.getVideosAsNumber());
+                stmt.setString(4, channel.getViewsAsNumber());
                 stmt.setString(5, channel.getJoinDate());
                 stmt.setString(6, channel.getLinkToInstagram());
                 stmt.setString(7, channel.getLinkToFacebook());
@@ -78,7 +78,7 @@ public class Base {
 
                 stmt.executeUpdate();
             } catch (SQLIntegrityConstraintViolationException ex) {
-                LOGGER.log(Level.WARNING, "Duplicate url: " + channel.getUrl(), ex);
+                LOGGER.log(Level.WARNING, "Skip duplicate URL in database: " + channel.getUrl(), ex);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
