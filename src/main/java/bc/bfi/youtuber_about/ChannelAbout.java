@@ -12,7 +12,16 @@ public class ChannelAbout {
     private String linkToTwitter = "";
     private String linkToTiktok = "";
     private String otherLinks = "";
+    private String verification = "";
+    
+    public String getVerification() {
+        return verification;
+    }
 
+    public void setVerification(String verification) {
+        this.verification = verification.replaceAll("\\s+", " ").trim();
+    }
+    
     public ChannelAbout(String url) {
         this.url = url;
     }

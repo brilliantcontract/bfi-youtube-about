@@ -25,7 +25,7 @@ public class ChromeDownloader {
         WebDriver driver = createDriver(gridHost);
         
         // Load page.
-        System.out.println("Downloading page " + url);
+        System.out.println("Loading page " + url);
         driver.navigate().to(url);
         waitPageFullLoading(driver);
         
