@@ -117,7 +117,11 @@ public class ChannelAbout {
             return 0;
         }
 
-        input = input.replace(" subscribers", "").trim(); // Remove text part
+        input = input
+                .replace(" subscribers", "")
+                .replace(" videos", "")
+                .replace(" views", "")
+                .trim(); // Remove text part
         input = input.replace(",", ""); // Remove commas if any
 
         double multiplier = 1;
