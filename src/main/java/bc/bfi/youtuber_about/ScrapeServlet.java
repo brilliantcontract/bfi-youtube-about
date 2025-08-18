@@ -2,25 +2,20 @@ package bc.bfi.youtuber_about;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class ScrapeServlet extends HttpServlet {
 
-    private final ChromeDownloader downloader;
-    private final Parser parser;
-    private final Base base;
+    private final ScrapeService service;
 
     public ScrapeServlet() {
-        this(new ChromeDownloader(), new Parser(), new Base());
+        this(new ScrapeService());
     }
 
-    ScrapeServlet(ChromeDownloader downloader, Parser parser, Base base) {
-        this.downloader = downloader;
-        this.parser = parser;
-        this.base = base;
+    ScrapeServlet(ScrapeService service) {
+        this.service = service;
     }
 
     @Override
@@ -32,33 +27,11 @@ public class ScrapeServlet extends HttpServlet {
         }
 
         String gridHost = req.getParameter("gridHost");
-        if (gridHost == null || gridHost.isEmpty()) {
-            gridHost = "localhost";
-        }
-
-        if (base.exists(channelId)) {
-            resp.setContentType("text/plain");
-            PrintWriter writer = resp.getWriter();
-            writer.write("Skipped: " + channelId);
-            writer.flush();
-            
-            System.out.println("!!! Skipped: " + channelId + "(channel already exist in the database)");
-            
-            return;
-        }
-
-        String url = "https://youtube.com/" + channelId;
-
-        System.out.println("-------------------------------------");
-        System.out.println("Scrape: " + url);
-
-        String webPage = downloader.download(url, gridHost);
-        ChannelAbout channel = parser.parse(url, webPage);
-        base.add(channel);
+        String result = service.scrape(channelId, gridHost);
 
         resp.setContentType("text/plain");
         PrintWriter writer = resp.getWriter();
-        writer.write("Scraped: " + channelId);
+        writer.write(result);
         writer.flush();
     }
 }
