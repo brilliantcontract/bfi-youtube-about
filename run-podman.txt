@@ -1,0 +1,12 @@
+Run Chrome standalone:
+podman.exe run --rm -p 4444:4444 -p 7900:7900 --shm-size=2g 746e53791b42c6d866204efb122cfe2c38cb38e9705012b817ff4b9c84becf7e
+
+Run Selenium Grid:
+podman.exe compose -f docker-compose.yml up
+
+Channels for test:
+@ItsCarreview
+@carwow
+@view-cars
+@autogefuehl
+@DougDeMuro
