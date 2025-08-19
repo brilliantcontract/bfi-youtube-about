@@ -23,30 +23,47 @@ public class ChromeDownloader {
 
     public String download(String url, String gridHost) {
         WebDriver driver = createDriver(gridHost);
-        
-        // Load page.
-        System.out.println("Loading page " + url);
-        driver.navigate().to(url);
-        waitPageFullLoading(driver);
-        
-        // Load about dialog.
-        System.out.println("Wait for \"more...\" button");
-        driver.findElement(By.className("truncated-text-wiz__absolute-button")).click();
-        waitAboutDialogFullLoading(driver);
-
-        String webPage = "";
         try {
-            webPage = extractor.gainDynamic(driver, Boolean.FALSE);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            // Load page.
+            System.out.println("Loading page " + url);
+            driver.navigate().to(url);
+            waitPageFullLoading(driver);
+
+            // Load about dialog.
+            System.out.println("Wait for \"more...\" button");
+            openAboutDialog(driver);
+            waitAboutDialogFullLoading(driver);
+
+            String webPage = "";
+            try {
+                webPage = extractor.gainDynamic(driver, Boolean.FALSE);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+
+            return webPage;
+        } finally {
+            driver.quit();
         }
-
-        driver.quit();
-
-        return webPage;
     }
 
-    private void waitPageFullLoading(WebDriver driver) {
+    void openAboutDialog(WebDriver driver) {
+        int attempts = 0;
+        while (true) {
+            try {
+                driver.findElement(By.className("truncated-text-wiz__absolute-button")).click();
+                return;
+            } catch (org.openqa.selenium.NoSuchElementException ex) {
+                if (++attempts >= 3) {
+                    throw ex;
+                }
+                driver.navigate().refresh();
+                waitPageFullLoading(driver);
+            }
+        }
+    }
+
+    protected void waitPageFullLoading(WebDriver driver) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
         try {
@@ -66,7 +83,7 @@ public class ChromeDownloader {
         }
     }
 
-    private void waitAboutDialogFullLoading(WebDriver driver) {
+    protected void waitAboutDialogFullLoading(WebDriver driver) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
         try {
