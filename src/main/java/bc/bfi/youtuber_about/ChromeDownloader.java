@@ -48,17 +48,21 @@ public class ChromeDownloader {
     }
 
     void openAboutDialog(WebDriver driver) {
-        int attempts = 0;
-        while (true) {
-            try {
-                driver.findElement(By.className("truncated-text-wiz__absolute-button")).click();
-                return;
-            } catch (org.openqa.selenium.NoSuchElementException ex) {
-                if (++attempts >= 3) {
-                    throw ex;
-                }
+        By selector = By.className("truncated-text-wiz__absolute-button");
+
+        for (int attempt = 0; attempt < 3; attempt++) {
+            if (attempt > 0) {
                 driver.navigate().refresh();
                 waitPageFullLoading(driver);
+            }
+
+            try {
+                driver.findElement(selector).click();
+                return;
+            } catch (org.openqa.selenium.NoSuchElementException ex) {
+                if (attempt == 2) {
+                    throw ex;
+                }
             }
         }
     }

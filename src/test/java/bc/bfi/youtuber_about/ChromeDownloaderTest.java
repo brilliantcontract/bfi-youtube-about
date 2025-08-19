@@ -32,11 +32,7 @@ public class ChromeDownloaderTest {
 
     @Test
     public void openAboutDialogShouldRetryWhenElementMissing() {
-        ChromeDownloader downloader = new ChromeDownloader() {
-            @Override
-            protected void waitPageFullLoading(WebDriver driver) {
-            }
-        };
+        ChromeDownloader downloader = spy(new ChromeDownloader());
         assertThat(downloader, notNullValue());
 
         WebDriver driver = mock(WebDriver.class);
@@ -48,11 +44,13 @@ public class ChromeDownloaderTest {
                 .thenThrow(new NoSuchElementException("missing"))
                 .thenReturn(button);
         when(driver.navigate()).thenReturn(navigation);
+        doNothing().when(downloader).waitPageFullLoading(driver);
 
         downloader.openAboutDialog(driver);
 
         verify(driver, times(2)).findElement(selector);
         verify(navigation).refresh();
         verify(button).click();
+        verify(downloader).waitPageFullLoading(driver);
     }
 }
