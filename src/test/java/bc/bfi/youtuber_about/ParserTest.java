@@ -16,12 +16,33 @@ public class ParserTest {
 
     @Test
     public void parseDecodesRedirectLinks() {
-        String html = "<div id='links-section'><a class='yt-core-attributed-string__link' href='https://www.youtube.com/redirect?event=channel_description&redir_token=token&q=https%3A%2F%2Ftwitter.com%2FStephenJohnPeel'></a></div>";
+        String html = "<div id='links-section'"
+                + "><a class='yt-core-attributed-string__link' href='https://www.youtube.com/redirect?event=channel_description&redir_token=token&q=https%3A%2F%2Ftwitter.com%2FStephenJohnPeel'></a>"
+                + "<a class='yt-core-attributed-string__link' href='https://www.youtube.com/redirect?event=channel_description&redir_token=token&q=https%3A%2F%2Fexample.com'></a>"
+                + "</div>";
         Parser parser = new Parser();
         ChannelAbout channel = parser.parse("https://www.youtube.com/@some/about", html);
-        String expected = "https://twitter.com/StephenJohnPeel";
-        assertThat(channel.getOtherLinks(), is(expected));
-        assertThat(channel.getLinkToTwitter(), is(expected));
+        String expectedTwitter = "https://twitter.com/StephenJohnPeel";
+        String expectedOther = "https://example.com";
+        assertThat(channel.getLinkToTwitter(), is(expectedTwitter));
+        assertThat(channel.getOtherLinks(), is(expectedOther));
+    }
+
+    @Test
+    public void parseRemovesExtractedSocialLinksFromOtherLinks() {
+        String html = "<div id='links-section'>"
+                + "<a class='yt-core-attributed-string__link' href='https://facebook.com/f'></a>"
+                + "<a class='yt-core-attributed-string__link' href='https://instagram.com/i'></a>"
+                + "<a class='yt-core-attributed-string__link' href='https://tiktok.com/@t'></a>"
+                + "<a class='yt-core-attributed-string__link' href='https://twitter.com/x'></a>"
+                + "<a class='yt-core-attributed-string__link' href='https://example.com'></a>"
+                + "</div>";
+        Parser parser = new Parser();
+        ChannelAbout channel = parser.parse("https://www.youtube.com/@some/about", html);
+        assertThat(channel.getLinkToFacebook(), is("https://facebook.com/f"));
+        assertThat(channel.getLinkToInstagram(), is("https://instagram.com/i"));
+        assertThat(channel.getLinkToTiktok(), is("https://tiktok.com/@t"));
+        assertThat(channel.getLinkToTwitter(), is("https://twitter.com/x"));
+        assertThat(channel.getOtherLinks(), is("https://example.com"));
     }
 }
-

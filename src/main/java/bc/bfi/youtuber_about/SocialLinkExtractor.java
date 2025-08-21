@@ -47,16 +47,24 @@ public class SocialLinkExtractor {
             return Collections.emptyList();
         }
 
-        // unwrap, parse, filter, stringify; also de-duplicate while preserving order
-        LinkedHashSet<String> out = rawLinks.stream()
-                .map(SocialLinkExtractor::unwrapRedirect)
-                .map(SocialLinkExtractor::toURI)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter(hostPredicate)
-                .map(URI::toString)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        List<String> collected = new ArrayList<>();
+        ListIterator<String> it = rawLinks.listIterator();
+        while (it.hasNext()) {
+            String original = it.next();
+            String url = unwrapRedirect(original);
+            Optional<URI> uriOpt = toURI(url);
+            if (uriOpt.isPresent() && hostPredicate.test(uriOpt.get())) {
+                collected.add(uriOpt.get().toString());
+                it.remove();
+            } else {
+                if (!original.equals(url)) {
+                    it.set(url);
+                }
+            }
+        }
 
+        // De-duplicate while preserving encounter order
+        LinkedHashSet<String> out = new LinkedHashSet<>(collected);
         return new ArrayList<>(out);
     }
 
