@@ -135,7 +135,8 @@ public class ChannelAbout {
 
         try {
             double value = Double.parseDouble(input);
-            return (int) Math.round(value * multiplier);
+            int result = (int) Math.round(value * multiplier);
+            return Math.max(0, result);
         } catch (NumberFormatException e) {
             return 0; // Fallback for unexpected input
         }
