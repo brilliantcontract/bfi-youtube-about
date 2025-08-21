@@ -34,12 +34,12 @@ public class Parser {
                 .eachAttr("abs:href").stream()
                 .map(Parser::unwrapYoutubeRedirect)
                 .collect(Collectors.toList());
-        channel.setOtherLinks(String.join("◙", links));
 
         channel.setLinkToFacebook(SocialLinkExtractor.facebook(links));
         channel.setLinkToInstagram(SocialLinkExtractor.instagram(links));
         channel.setLinkToTiktok(SocialLinkExtractor.tiktok(links));
         channel.setLinkToTwitter(SocialLinkExtractor.twitter(links));
+        channel.setOtherLinks(String.join("◙", links));
 
         return channel;
     }
