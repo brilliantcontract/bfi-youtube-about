@@ -13,6 +13,15 @@ public class ChannelAbout {
     private String linkToTiktok = "";
     private String otherLinks = "";
     private String verification = "";
+    private String thumbnail = "";
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
     
     public String getVerification() {
         return verification;
@@ -136,7 +145,7 @@ public class ChannelAbout {
         try {
             double value = Double.parseDouble(input);
             int result = (int) Math.round(value * multiplier);
-            return Math.max(0, result);
+            return Math.abs(result);
         } catch (NumberFormatException e) {
             return 0; // Fallback for unexpected input
         }

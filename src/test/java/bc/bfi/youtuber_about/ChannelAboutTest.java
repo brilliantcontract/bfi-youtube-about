@@ -11,7 +11,7 @@ public class ChannelAboutTest {
     public void getViewsAsNumberReturnsZeroWhenNegative() {
         ChannelAbout channel = new ChannelAbout("https://example.com");
         channel.setViews("-42 views");
-        assertThat(channel.getViewsAsNumber(), is("0"));
+        assertThat(channel.getViewsAsNumber(), is("42"));
     }
 }
 

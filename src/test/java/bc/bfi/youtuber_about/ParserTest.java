@@ -16,14 +16,19 @@ public class ParserTest {
 
     @Test
     public void parseDecodesRedirectLinks() {
-        String html = "<div id='links-section'"
+        // Initialization.
+        final String expectedTwitter = "https://twitter.com/StephenJohnPeel";
+        final String expectedOther = "https://example.com";
+        final String html = "<div id='links-section'"
                 + "><a class='yt-core-attributed-string__link' href='https://www.youtube.com/redirect?event=channel_description&redir_token=token&q=https%3A%2F%2Ftwitter.com%2FStephenJohnPeel'></a>"
                 + "<a class='yt-core-attributed-string__link' href='https://www.youtube.com/redirect?event=channel_description&redir_token=token&q=https%3A%2F%2Fexample.com'></a>"
                 + "</div>";
+        
+        // Execution.
         Parser parser = new Parser();
         ChannelAbout channel = parser.parse("https://www.youtube.com/@some/about", html);
-        String expectedTwitter = "https://twitter.com/StephenJohnPeel";
-        String expectedOther = "https://example.com";
+        
+        // Assertion.
         assertThat(channel.getLinkToTwitter(), is(expectedTwitter));
         assertThat(channel.getOtherLinks(), is(expectedOther));
     }

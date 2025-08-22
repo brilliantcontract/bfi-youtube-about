@@ -29,6 +29,8 @@ public class Parser {
         }
 
         channel.setDescription(fetchText("yt-attributed-string#description-container"));
+        
+        channel.setThumbnail(fetchAttribute("yt-avatar-shape img", "src"));
 
         List<String> links = doc.select("div#links-section a.yt-core-attributed-string__link")
                 .eachAttr("abs:href").stream()
@@ -44,13 +46,28 @@ public class Parser {
         return channel;
     }
 
-    private String fetchText(String cssSelector) {
+    private String fetchText(final String cssSelector) {
         String results = "";
 
         try {
             Elements elements = doc.select(cssSelector);
             if (!elements.isEmpty()) {
                 results = elements.get(0).text();
+            }
+        } catch (Exception ex) {
+            System.err.println("Cannot parse with Jsoup: " + ex.getMessage());
+        }
+
+        return results;
+    }
+
+    private String fetchAttribute(final String cssSelector, final String attribute) {
+        String results = "";
+
+        try {
+            Elements elements = doc.select(cssSelector);
+            if (!elements.isEmpty()) {
+                results = elements.get(0).attr(attribute);
             }
         } catch (Exception ex) {
             System.err.println("Cannot parse with Jsoup: " + ex.getMessage());
