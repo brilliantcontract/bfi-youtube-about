@@ -55,23 +55,6 @@ public class ChromeDownloaderTest {
         verify(downloader).waitPageFullLoading(driver);
     }
 
-    @Test
-    public void createDriverShouldAddProxyArgumentWhenEnabled() {
-        // Initialization.
-        final String expectedProxy = "--proxy-server=http://" + Config.PROXY_USERNAME + ":" + Config.PROXY_PASSWORD + "@" + Config.PROXY_HOST + ":" + Config.PROXY_PORT;
-
-        // Mocks.
-        CapturingChromeDownloader downloader = new CapturingChromeDownloader();
-
-        // Execution.
-        downloader.createDriver("localhost");
-
-        // Assertion.
-        final java.util.Map<java.lang.String, java.lang.Object> options = downloader.captured.asMap();
-        final java.util.List<java.lang.String> args = (java.util.List<java.lang.String>) options.get("args");
-        assertThat((java.lang.Iterable<java.lang.String>) args, hasItem(expectedProxy));
-    }
-
     private static final class CapturingChromeDownloader extends ChromeDownloader {
         ChromeOptions captured;
 

@@ -23,7 +23,7 @@ public class ChromeDownloader {
     private final PageContentExtractor extractor = new PageContentExtractor();
 
     public String download(final String url, final String gridHost) {
-        Objects.requireNonNull(url, "url must not be NULL");
+        Objects.requireNonNull(url, "URL must not be NULL");
         Objects.requireNonNull(gridHost, "gridHost must not be NULL");
 
         WebDriver driver = createDriver(gridHost);
@@ -126,9 +126,6 @@ public class ChromeDownloader {
         options.addArguments("--disable-blink-features=AutomationControlled");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-blink-features");
-
-        // Expose arguments for tests.
-        options.setCapability("args", options.getArguments());
 
         return connectRemote(gridHost, options);
     }
