@@ -67,9 +67,9 @@ public class ChromeDownloaderTest {
         downloader.createDriver("localhost");
 
         // Assertion.
-        final java.util.Map options = downloader.captured.asMap();
-        final java.util.List args = (java.util.List) options.get("args");
-        assertThat(args, hasItem(expectedProxy));
+        final java.util.Map<java.lang.String, java.lang.Object> options = downloader.captured.asMap();
+        final java.util.List<java.lang.String> args = (java.util.List<java.lang.String>) options.get("args");
+        assertThat((java.lang.Iterable<java.lang.String>) args, hasItem(expectedProxy));
     }
 
     private static final class CapturingChromeDownloader extends ChromeDownloader {
