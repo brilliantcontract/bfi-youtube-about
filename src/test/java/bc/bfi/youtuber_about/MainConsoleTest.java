@@ -60,5 +60,31 @@ public class MainConsoleTest {
         assertThat(text, containsString("urls"));
         verify(service, never()).scrape(anyString(), anyString());
     }
+
+    @Test
+    public void runPrintsCompletionMessage() throws Exception {
+        // Initialization.
+        final File file = File.createTempFile("urls", ".txt");
+        file.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(file);
+        writer.println("@chan");
+        writer.close();
+        final String host = "host";
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final PrintStream originalOut = System.out;
+
+        // Mocks.
+        ScrapeService service = mock(ScrapeService.class);
+
+        // Execution.
+        System.setOut(new PrintStream(output));
+        MainConsole console = new MainConsole(service);
+        console.run(new String[] {"-selenium-grid-ip", host, "-urls", file.getAbsolutePath()});
+        System.setOut(originalOut);
+
+        // Assertion.
+        final String text = output.toString();
+        assertThat(text, containsString("SCRAPING PROCESS COMPLETED"));
+    }
 }
 

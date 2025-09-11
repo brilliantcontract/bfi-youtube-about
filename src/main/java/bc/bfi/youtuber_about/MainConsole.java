@@ -90,6 +90,8 @@ public class MainConsole {
             String id = ids.get(i);
             service.scrape(id, gridHost);
         }
+
+        ConsoleUtil.printScrapingCompleted();
     }
 
     public static void main(String[] args) {

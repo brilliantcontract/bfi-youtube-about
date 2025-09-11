@@ -163,6 +163,8 @@ public class Main extends javax.swing.JFrame {
             processed++;
             progressBar.setValue(processed);
         }
+
+        ConsoleUtil.printScrapingCompleted();
     }
 
     public static void main(String args[]) {
