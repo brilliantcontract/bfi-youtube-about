@@ -3,6 +3,7 @@ package bc.bfi.youtuber_about;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import org.junit.Ignore;
 import static org.mockito.Mockito.*;
 
@@ -53,4 +54,29 @@ public class ChromeDownloaderTest {
         verify(button).click();
         verify(downloader).waitPageFullLoading(driver);
     }
+
+    @Test
+    public void createDriverShouldAddProxyArgumentWhenEnabled() {
+        // Initialization.
+        final String expectedProxy = "--proxy-server=http://" + Config.PROXY_USERNAME + ":" + Config.PROXY_PASSWORD + "@" + Config.PROXY_HOST + ":" + Config.PROXY_PORT;
+
+        // Mocks.
+        CapturingChromeDownloader downloader = new CapturingChromeDownloader();
+
+        // Execution.
+        downloader.createDriver("localhost");
+
+        // Assertion.
+        assertThat(downloader.captured.getArguments(), hasItem(expectedProxy));
+    }
+
+    private static final class CapturingChromeDownloader extends ChromeDownloader {
+        ChromeOptions captured;
+
+        protected WebDriver connectRemote(final String gridHost, final ChromeOptions options) {
+            captured = options;
+            return mock(WebDriver.class);
+        }
+    }
 }
+

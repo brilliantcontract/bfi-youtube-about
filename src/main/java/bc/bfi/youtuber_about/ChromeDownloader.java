@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.By;
@@ -21,7 +22,10 @@ public class ChromeDownloader {
     private static final Logger LOGGER = Logger.getLogger(ChromeDownloader.class.getName());
     private final PageContentExtractor extractor = new PageContentExtractor();
 
-    public String download(String url, String gridHost) {
+    public String download(final String url, final String gridHost) {
+        Objects.requireNonNull(url, "url must not be NULL");
+        Objects.requireNonNull(gridHost, "gridHost must not be NULL");
+
         WebDriver driver = createDriver(gridHost);
         try {
             // Load page.
@@ -47,7 +51,7 @@ public class ChromeDownloader {
         }
     }
 
-    void openAboutDialog(WebDriver driver) {
+    void openAboutDialog(final WebDriver driver) {
         By selector = By.className("yt-truncated-text__absolute-button");
 
         for (int attempt = 0; attempt < 3; attempt++) {
@@ -67,7 +71,7 @@ public class ChromeDownloader {
         }
     }
 
-    protected void waitPageFullLoading(WebDriver driver) {
+    protected void waitPageFullLoading(final WebDriver driver) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
         try {
@@ -87,7 +91,7 @@ public class ChromeDownloader {
         }
     }
 
-    protected void waitAboutDialogFullLoading(WebDriver driver) {
+    protected void waitAboutDialogFullLoading(final WebDriver driver) {
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
         try {
@@ -107,10 +111,14 @@ public class ChromeDownloader {
         }
     }
 
-    protected WebDriver createDriver(String gridHost) {
+    protected WebDriver createDriver(final String gridHost) {
         ChromeOptions options = new ChromeOptions();
+        if (Config.USE_PROXY.booleanValue()) {
+            final String address = Config.PROXY_HOST + ":" + Config.PROXY_PORT;
+            final String auth = Config.PROXY_USERNAME + ":" + Config.PROXY_PASSWORD;
+            options.addArguments("--proxy-server=http://" + auth + "@" + address);
+        }
         //options.addArguments("--remote-allow-origins=*");
-        //options.addArguments("--proxy-server=socks5://3.85.180.106:1080");
 
         // By pass bot detection.
         options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
@@ -122,7 +130,7 @@ public class ChromeDownloader {
         return connectRemote(gridHost, options);
     }
 
-    protected WebDriver connectRemote(String gridHost, ChromeOptions options) {
+    protected WebDriver connectRemote(final String gridHost, final ChromeOptions options) {
         try {
             URL url = new URL("http://" + gridHost + ":4444/wd/hub");
             return new RemoteWebDriver(url, options);
