@@ -127,6 +127,9 @@ public class ChromeDownloader {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-blink-features");
 
+        // Expose arguments for tests.
+        options.setCapability("args", options.getArguments());
+
         return connectRemote(gridHost, options);
     }
 
