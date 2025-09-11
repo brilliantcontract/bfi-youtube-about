@@ -48,7 +48,7 @@ public class ChromeDownloader {
     }
 
     void openAboutDialog(WebDriver driver) {
-        By selector = By.className("truncated-text-wiz__absolute-button");
+        By selector = By.className("yt-truncated-text__absolute-button");
 
         for (int attempt = 0; attempt < 3; attempt++) {
             if (attempt > 0) {
@@ -73,7 +73,7 @@ public class ChromeDownloader {
         try {
             WebElement element = wait.until(
                     ExpectedConditions.visibilityOfElementLocated(
-                            By.className("truncated-text-wiz__absolute-button")
+                            By.className("yt-truncated-text__absolute-button")
                     )
             );
         } catch (TimeoutException ex) {

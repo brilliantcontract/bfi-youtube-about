@@ -38,7 +38,7 @@ public class ChromeDownloaderTest {
         WebDriver driver = mock(WebDriver.class);
         WebDriver.Navigation navigation = mock(WebDriver.Navigation.class);
         WebElement button = mock(WebElement.class);
-        By selector = By.className("truncated-text-wiz__absolute-button");
+        By selector = By.className("yt-truncated-text__absolute-button");
 
         when(driver.findElement(selector))
                 .thenThrow(new NoSuchElementException("missing"))
